@@ -1,16 +1,33 @@
-import platform
-import subprocess
+#import platform
+#import subprocess
 
-import numpy as np
+#import numpy as np
 
 # tag::print_utils[]
-from dlgo import gotypes
+import enum
+class Player(enum.Enum) :
+    black = 1
+    white = 2
+
+    @property
+    def other(self):
+        return Player.black if self == Player.white else Player.white
+
+from collections import namedtuple
+
+class Point(namedtuple('Point','row col')):
+    def neighbors(self):
+        return [
+            Point(self.row -1, self.col),
+            Point(self.row +1, self.col),
+            Point(self.row, self.col -1),
+            Point(self.row, self.col +1)]
 
 COLS = 'ABCDEFGHJKLMNOPQRST'
 STONE_TO_CHAR = {
     None: ' . ',
-    gotypes.Player.black: ' x ',
-    gotypes.Player.white: ' o ',
+    Player.black: ' x ',
+    Player.white: ' o ',
 }
 
 
@@ -29,12 +46,13 @@ def print_board(board):
         bump = " " if row <= 9 else ""
         line = []
         for col in range(1, board.num_cols + 1):
-            stone = board.get(gotypes.Point(row=row, col=col))
+            stone = board.get(Point(row=row, col=col))
             line.append(STONE_TO_CHAR[stone])
         print('%s%d %s' % (bump, row, ''.join(line)))
     print('    ' + '  '.join(COLS[:board.num_cols]))
 # end::print_utils[]
 
+'''
 
 # tag::human_coordinates[]
 def point_from_coords(coords):
@@ -76,3 +94,5 @@ class MoveAge():
 
     def increment_all(self):
         self.move_ages[self.move_ages > -1] += 1
+
+'''

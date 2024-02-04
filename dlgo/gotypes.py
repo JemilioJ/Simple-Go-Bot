@@ -1,5 +1,4 @@
 import enum
-
 class Player(enum.Enum) :
     black = 1
     white = 2

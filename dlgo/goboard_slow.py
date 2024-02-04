@@ -1,9 +1,16 @@
 import copy
-from dlgo.goytypes import Player
+import enum
+class Player(enum.Enum) :
+    black = 1
+    white = 2
+
+    @property
+    def other(self):
+        return Player.black if self == Player.white else Player.white
 
 class Move():
     def _init_(self, point=None, is_pass=False, is_resign=False):
-        assert (point is not None) ^ is_Pass ^ is_resign
+        assert (point is not None) ^ is_pass ^ is_resign
         self.point = point
         self.is_play = (self.play is not None)
         self.is_pass = is_pass
@@ -12,12 +19,12 @@ class Move():
         @classmethod
         def play(cls, point):
             return Move(point = point)
-         @classmethod
+        @classmethod
         def pass_turn(cls):
-            return Move(is_pass = true)
-         @classmethod
+            return Move(is_pass = True)
+        @classmethod
         def resign(cls):
-            return Move(is_resign = true)
+            return Move(is_resign = True)
 
 class GoString():
     def _init_(self, color, stones, liberties):
@@ -54,7 +61,7 @@ class Board():
         self.num_cols = num_cols
         self._grid = {}
     
- def place_stone(self, player, point):
+    def place_stone(self, player, point):
         assert self.is_on_grid(point)
         assert self._grid.get(point) is None
         adjacent_same_color = []
@@ -84,7 +91,7 @@ class Board():
             if other_color_string.num_liberties == 0:
                 self._remove_string(other_color_string)
                 
-   def is_on_grid(self, point):
+    def is_on_grid(self, point):
         return 1 <= point.row <= self.num_rows and \
             1 <= point.col <= self.num_cols
 
@@ -142,7 +149,7 @@ class GameState():
             return False
         return self.last_move.is_pass and second_last_move.is_pass
 
-     def is_move_self_capture(self, player, move):
+    def is_move_self_capture(self, player, move):
         if not move.is_play:
             return False
         next_board = copy.deepcopy(self.board)
@@ -153,7 +160,7 @@ class GameState():
     def situation(self):
         return (self.next_player, self.board)
 
-     def does_move_violate_ko(self, player, move):
+    def does_move_violate_ko(self, player, move):
         if not move.is_play:
             return False
         next_board = copy.deepcopy(self.board)
