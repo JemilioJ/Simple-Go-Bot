@@ -1,14 +1,37 @@
 # tag::randombotimports[]
 import random
-from dlgo.agent.base import Agent
-from dlgo.agent.helpers import is_point_an_eye
-from dlgo.goboard_slow import Move
-from dlgo.gotypes import Point
+from .helpers import is_point_an_eye
+from .base import Agent
 # end::randombotimports[]
+from collections import namedtuple
 
+class Point(namedtuple('Point','row col')):
+    def neighbors(self):
+        return [
+            Point(self.row -1, self.col),
+            Point(self.row +1, self.col),
+            Point(self.row, self.col -1),
+            Point(self.row, self.col +1)]
+
+class Move():
+    def _init_(self, point=None, is_pass=False, is_resign=False):
+        assert (point is not None) ^ is_pass ^ is_resign
+        self.point = point
+        self.is_play = (self.play is not None)
+        self.is_pass = is_pass
+        self.is_resign = is_resign
+
+        @classmethod
+        def play(cls, point):
+            return Move(point = point)
+        @classmethod
+        def pass_turn(cls):
+            return Move(is_pass = True)
+        @classmethod
+        def resign(cls):
+            return Move(is_resign = True)
 
 __all__ = ['RandomBot']
-
 
 # tag::random_bot[]
 class RandomBot(Agent):
